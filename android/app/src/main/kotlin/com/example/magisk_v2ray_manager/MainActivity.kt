@@ -1,4 +1,4 @@
-package com.example.magisk_v2ray_manager
+package co.lintian.v2manager
 
 import io.flutter.embedding.android.FlutterActivity
 

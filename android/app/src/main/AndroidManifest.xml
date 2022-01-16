@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.magisk_v2ray_manager">
+    package="co.lintian.v2manager">
    <application
-        android:label="magisk_v2ray_manager"
+        android:label="V2M"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -3,3 +3,6 @@ android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png filter=lfs diff=lfs merge
 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png filter=lfs diff=lfs merge=lfs -text
 android/app/src/main/res/mipmap-hdpi/ic_launcher.png filter=lfs diff=lfs merge=lfs -text
 android/app/src/main/res/mipmap-mdpi/ic_launcher.png filter=lfs diff=lfs merge=lfs -text
+assets/github.png filter=lfs diff=lfs merge=lfs -text
+assets/magisk.png filter=lfs diff=lfs merge=lfs -text
+assets/v2ray.png filter=lfs diff=lfs merge=lfs -text
