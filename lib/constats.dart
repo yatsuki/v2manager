@@ -36,7 +36,7 @@ class Shell {
     if (!cmd.endsWith(' > /dev/null 2>&1')) {
       cmd = cmd + ' > /dev/null 2>&1';
     }
-    runCmd(cmd);
+    await runCmd(cmd);
     // _output.drain();
   }
 
@@ -52,7 +52,7 @@ class Shell {
 
   // 执行有输出语句的命令,缓慢输出的场合无法拿到所有输出信息
   static Future<String> runWithOutput(String cmd) async {
-    runCmd(cmd);
+    await runCmd(cmd);
     final ret = await _output!.firstWhere((str) => str.isNotEmpty);
     _output!.drain();
     return ret;
