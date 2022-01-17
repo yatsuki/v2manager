@@ -1,10 +1,4 @@
-import 'dart:convert';
-import 'dart:io';
-
-
-import 'package:async/async.dart' show StreamGroup;
 import 'package:flutter/material.dart';
-
 import 'package:url_launcher/url_launcher.dart';
 import 'package:v2manager/constats.dart';
 
@@ -18,9 +12,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  late Process proc;
-  late Stream<String> _retStream;
-
   String _platform = "";
   int _pid = 0;
   String _version = "";
@@ -31,55 +22,43 @@ class _HomePageState extends State<HomePage> {
   bool _iptablesActived = false;
 
   Future _initBasicInfo() async {
-    proc = await Process.start("su", [""], mode: ProcessStartMode.detachedWithStdio);
-
-    // 将标准输出和错误输出合并输出
-    _retStream = StreamGroup.merge([proc.stdout.transform(utf8.decoder), proc.stderr.transform(utf8.decoder)]).asBroadcastStream();
 
     // Check Program exist
-    proc.stdin.writeln("md5sum /data/adb/modules/v2ray/system/bin/v2ray");
-    final chkRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
+    final chkRet = await Shell.runWithOutput('md5sum /data/adb/modules/v2ray/system/bin/v2ray');
     final modMD5 = chkRet.substring(0, chkRet.indexOf(' '));
  
-    proc.stdin.writeln("/data/adb/modules/v2ray/system/bin/v2ray --version");
-    final verRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
+    final verRet = await Shell.runWithOutput('/data/adb/modules/v2ray/system/bin/v2ray --version');
     _version = verRet.substring(6, verRet.indexOf('('));
     _platform = verRet.substring(verRet.lastIndexOf('(') + 1, verRet.lastIndexOf(')'));
 
 
-    proc.stdin.writeln("md5sum /system/bin/v2ray");
-    final enabledRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
+    final enabledRet = await Shell.runWithOutput('md5sum /system/bin/v2ray');
     final sysBinMD5 = enabledRet.substring(0, chkRet.indexOf(' '));
     _actived = sysBinMD5.compareTo(modMD5) == 0;
 
 
-    proc.stdin.writeln("/data/adb/modules/v2ray/scripts/v2ray.service status");
-    final pidRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
-    if (pidRet.indexOf('PID: ') > 0) {
+    final pidRet = await Shell.runWithOutput('/data/adb/modules/v2ray/scripts/v2ray.service status');
+    if (pidRet.indexOf('PID: ') > 0) { 
       _pid = int.parse(pidRet.substring(pidRet.indexOf('PID: ')+5, pidRet.lastIndexOf(' ')));
-    } else {
-      _pid = 0;
     }
 
-    proc.stdin.writeln("grep versionCode /data/adb/modules/v2ray/module.prop");
-    final modVerRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
+    // versionCode=20210801
+    final modVerRet = await Shell.runWithOutput('grep versionCode /data/adb/modules/v2ray/module.prop');
     _modVersion = modVerRet.substring(modVerRet.indexOf('=')+1, modVerRet.length).trim();
 
     // 查看时排除错误输出
-    proc.stdin.writeln("iptables -t nat -L V2RAY 2>/dev/null | wc -l");
-    final ipRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
-    
+    final ipRet = await Shell.runWithOutput('iptables -t nat -L V2RAY 2>/dev/null | wc -l');
     _iptablesActived = int.parse(ipRet) > 0;
-
+  
     setState(() {});
   }
 
   Future _toggleV2rayRun() async {
     String script = "/data/adb/modules/v2ray/scripts/v2ray.service";
-    proc.stdin.writeln(script + (_pid > 0? ' stop' : ' start') + ' > /dev/null 2>&1');
+    // 执行时丢弃所有输出
+    await Shell.runWithNothing(script + (_pid > 0? ' stop' : ' start'));
 
-    proc.stdin.writeln(script + " status");
-    final pidRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
+    final pidRet = await Shell.runWithOutput(script + " status");
 
     setState(() {
       if (pidRet.indexOf('PID: ') > 0) {
@@ -94,26 +73,22 @@ class _HomePageState extends State<HomePage> {
 
   // }
 
-  void _toggleIptablesRules() async {
+  Future _toggleIptablesRules() async {
     String script = "/data/adb/modules/v2ray/scripts/v2ray.tproxy";
-    proc.stdin.writeln(script + (_iptablesActived ? ' disable' : ' enable') + ' > /dev/null 2>&1');
+    await Shell.runWithNothing(script + (_iptablesActived ? ' disable' : ' enable'));
 
-    proc.stdin.writeln("iptables -t nat -L V2RAY 2>/dev/null | wc -l");
-    final ipRet = await _retStream.firstWhere((str)=> str.isNotEmpty);
+    final ipRet = await Shell.runWithOutput("iptables -t nat -L V2RAY 2>/dev/null | wc -l");
     var count = int.parse(ipRet);
 
     setState(() { 
       _iptablesActived = count > 0;
     });
-  
-    _retStream.drain();
+
   }
 
-  void _toggleIptablesFlash() async {
-    String script = "/data/adb/modules/v2ray/scripts/v2ray.tproxy";
-
+  Future _toggleIptablesFlash() async {
     // 丢弃所有输出，不做任何处理
-    proc.stdin.writeln(script + ' renew > /dev/null 2>&1');
+    Shell.runWithNothing("/data/adb/modules/v2ray/scripts/v2ray.tproxy renew");
 
     setState(() { _iptablesActived = true; });
   }

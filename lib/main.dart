@@ -14,6 +14,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    // 初始化Root Shell执行环境
+    Shell();
+
     // 隐藏底部按钮栏
     // SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     // // 隐藏状态栏
@@ -22,7 +25,7 @@ class MyApp extends StatelessWidget {
     // SystemChrome.setEnabledSystemUIOverlays([]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "V2ray Manager",
+      // title: "V2ray Manager",
       theme: ThemeData(
         // fontFamily: 'Georgia',
         primarySwatch: Colors.green,
