@@ -6,3 +6,4 @@ android/app/src/main/res/mipmap-mdpi/ic_launcher.png filter=lfs diff=lfs merge=l
 assets/github.png filter=lfs diff=lfs merge=lfs -text
 assets/magisk.png filter=lfs diff=lfs merge=lfs -text
 assets/v2ray.png filter=lfs diff=lfs merge=lfs -text
+assets/blog.png filter=lfs diff=lfs merge=lfs -text

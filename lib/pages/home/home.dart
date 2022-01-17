@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:v2manager/constats.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   bool _actived = false;
 
   String _modVersion = "";
-  String _modLatest = "";
+  final String _modLatest = "20220119";
   bool _iptablesActived = false;
 
   Future _initBasicInfo() async {
@@ -208,9 +207,10 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 16),
         const Text("支持", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 4),
-        const Text("本应用将一直保持免费开源，向开发者捐赠以表示支持", softWrap: true, style: TextStyle(fontSize: 8, color: Colors.grey)),
+        const Text("本应用将一直保持免费开源，感谢大家一如既往的支持", softWrap: true, style: TextStyle(fontSize: 8, color: Colors.grey)),
         Row(children: [
-          IconButton(onPressed: () => launch('https://github.com/yatsuki/v2ray'), icon: Image.asset("assets/github.png",), color: Colors.black87, iconSize: 32,),
+          IconButton(onPressed: (){}, icon: Image.asset("assets/github.png",), color: Colors.black87, iconSize: 32,),
+          IconButton(onPressed: (){}, icon: Image.asset("assets/blog.png",), color: Colors.black87, iconSize: 32,),
         ]),
 
       ])));
