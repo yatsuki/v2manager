@@ -41,6 +41,11 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    aaptOptions { 
+        cruncherEnabled = false
+        useNewCruncher = false
+    }
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "co.lintian.v2manager"
