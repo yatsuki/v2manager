@@ -34,7 +34,7 @@ jobs:
       run: flutter build apk --target-platform=android-arm64 --release --obfuscate --split-debug-info=tmp/
   
     - name: 6.发布至Github-Release
-      uses: ncipollo/release-action@latest
+      uses: ncipollo/release-action@v1
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         body: "自动发布"
